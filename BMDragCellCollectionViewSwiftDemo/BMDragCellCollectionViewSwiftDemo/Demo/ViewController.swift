@@ -27,15 +27,15 @@ import UIKit
 let kScreen_width  = UIScreen.main.bounds.size.width
 let kScreen_height = UIScreen.main.bounds.size.height
 let kCellWithReuseIdentifier = "kCellWithReuseIdentifier"
-let klineCount = 3
+let klineCount = 5
 
 class ViewController: UIViewController {
     @IBOutlet weak var dragCellCollectionView: BMDragCellCollectionView!
 
     lazy var layout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing      = 20
-        layout.minimumInteritemSpacing = 20
+        layout.minimumLineSpacing      = 3
+        layout.minimumInteritemSpacing = 3
         let width = (kScreen_width - (0.5 * CGFloat(klineCount))) / CGFloat(klineCount)
         layout.itemSize = CGSize.init(width: width, height: width)
         layout.scrollDirection = .vertical;
@@ -46,7 +46,7 @@ class ViewController: UIViewController {
 
     lazy var dataArray: [String] = {
         var array = Array<Any>()
-        var arc = arc4random_uniform(20) + 20
+        var arc = arc4random_uniform(50) + 20
         for index in 0...arc {
             array.append("数据--\(index)")
         }
