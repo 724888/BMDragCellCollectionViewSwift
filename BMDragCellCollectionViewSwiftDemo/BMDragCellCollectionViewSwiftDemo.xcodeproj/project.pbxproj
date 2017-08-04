@@ -12,7 +12,6 @@
 		325B0D2C1F31CD4E00E869E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 325B0D2A1F31CD4E00E869E8 /* LaunchScreen.storyboard */; };
 		325B0D371F31CD4F00E869E8 /* BMDragCellCollectionViewSwiftDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325B0D361F31CD4F00E869E8 /* BMDragCellCollectionViewSwiftDemoTests.swift */; };
 		325B0D421F31CD4F00E869E8 /* BMDragCellCollectionViewSwiftDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325B0D411F31CD4F00E869E8 /* BMDragCellCollectionViewSwiftDemoUITests.swift */; };
-		325B0D511F31CDD100E869E8 /* BMDragCellCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325B0D501F31CDD100E869E8 /* BMDragCellCollectionView.swift */; };
 		325B0E071F31CE7100E869E8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325B0D571F31CE7100E869E8 /* AppDelegate.swift */; };
 		325B0E081F31CE7100E869E8 /* BMHomeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325B0D591F31CE7100E869E8 /* BMHomeCell.swift */; };
 		325B0E091F31CE7100E869E8 /* BMHomeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 325B0D5A1F31CE7100E869E8 /* BMHomeCell.xib */; };
@@ -187,7 +186,8 @@
 		325B0EB21F31CE7100E869E8 /* 190@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 325B0E041F31CE7100E869E8 /* 190@2x.png */; };
 		325B0EB31F31CE7100E869E8 /* 191@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 325B0E051F31CE7100E869E8 /* 191@2x.png */; };
 		325B0EB41F31CE7100E869E8 /* 192@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 325B0E061F31CE7100E869E8 /* 192@2x.png */; };
-		32B706DC1F33F7FE00F18528 /* BMDragCellCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 32B706DB1F33F7FE00F18528 /* BMDragCellCollectionView.m */; };
+		328082C41F34473300DD4966 /* BMDragCellCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 328082C31F34473300DD4966 /* BMDragCellCollectionView.swift */; };
+		328082C61F344CA600DD4966 /* BMHoneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 328082C51F344CA600DD4966 /* BMHoneModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -219,7 +219,6 @@
 		325B0D3D1F31CD4F00E869E8 /* BMDragCellCollectionViewSwiftDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BMDragCellCollectionViewSwiftDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		325B0D411F31CD4F00E869E8 /* BMDragCellCollectionViewSwiftDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BMDragCellCollectionViewSwiftDemoUITests.swift; sourceTree = "<group>"; };
 		325B0D431F31CD4F00E869E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		325B0D501F31CDD100E869E8 /* BMDragCellCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BMDragCellCollectionView.swift; path = ../../BMDragCellCollectionView/BMDragCellCollectionView.swift; sourceTree = "<group>"; };
 		325B0D571F31CE7100E869E8 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		325B0D591F31CE7100E869E8 /* BMHomeCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMHomeCell.swift; sourceTree = "<group>"; };
 		325B0D5A1F31CE7100E869E8 /* BMHomeCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BMHomeCell.xib; sourceTree = "<group>"; };
@@ -394,8 +393,8 @@
 		325B0E041F31CE7100E869E8 /* 190@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "190@2x.png"; sourceTree = "<group>"; };
 		325B0E051F31CE7100E869E8 /* 191@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "191@2x.png"; sourceTree = "<group>"; };
 		325B0E061F31CE7100E869E8 /* 192@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "192@2x.png"; sourceTree = "<group>"; };
-		32B706DA1F33F7FE00F18528 /* BMDragCellCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMDragCellCollectionView.h; sourceTree = "<group>"; };
-		32B706DB1F33F7FE00F18528 /* BMDragCellCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BMDragCellCollectionView.m; sourceTree = "<group>"; };
+		328082C31F34473300DD4966 /* BMDragCellCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMDragCellCollectionView.swift; sourceTree = "<group>"; };
+		328082C51F344CA600DD4966 /* BMHoneModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMHoneModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -426,8 +425,7 @@
 		325B0D151F31CD4E00E869E8 = {
 			isa = PBXGroup;
 			children = (
-				32B706D91F33F7FE00F18528 /* BMDragCellCollectionView */,
-				325B0D4F1F31CDD100E869E8 /* BMDragCellCollectionView */,
+				328082C21F34471A00DD4966 /* BMDragCellCollectionView */,
 				325B0D201F31CD4E00E869E8 /* BMDragCellCollectionViewSwiftDemo */,
 				325B0D351F31CD4F00E869E8 /* BMDragCellCollectionViewSwiftDemoTests */,
 				325B0D401F31CD4F00E869E8 /* BMDragCellCollectionViewSwiftDemoUITests */,
@@ -477,14 +475,6 @@
 			path = BMDragCellCollectionViewSwiftDemoUITests;
 			sourceTree = "<group>";
 		};
-		325B0D4F1F31CDD100E869E8 /* BMDragCellCollectionView */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = BMDragCellCollectionView;
-			path = ../BMDragCellCollectionView;
-			sourceTree = "<group>";
-		};
 		325B0D561F31CE7100E869E8 /* AppDelegate */ = {
 			isa = PBXGroup;
 			children = (
@@ -499,6 +489,7 @@
 				325B0D591F31CE7100E869E8 /* BMHomeCell.swift */,
 				325B0D5A1F31CE7100E869E8 /* BMHomeCell.xib */,
 				325B0D5B1F31CE7100E869E8 /* ViewController.swift */,
+				328082C51F344CA600DD4966 /* BMHoneModel.swift */,
 			);
 			path = Demo;
 			sourceTree = "<group>";
@@ -680,14 +671,13 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		32B706D91F33F7FE00F18528 /* BMDragCellCollectionView */ = {
+		328082C21F34471A00DD4966 /* BMDragCellCollectionView */ = {
 			isa = PBXGroup;
 			children = (
-				32B706DA1F33F7FE00F18528 /* BMDragCellCollectionView.h */,
-				32B706DB1F33F7FE00F18528 /* BMDragCellCollectionView.m */,
-				325B0D501F31CDD100E869E8 /* BMDragCellCollectionView.swift */,
+				328082C31F34473300DD4966 /* BMDragCellCollectionView.swift */,
 			);
-			path = BMDragCellCollectionView;
+			name = BMDragCellCollectionView;
+			path = ../BMDragCellCollectionView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -999,10 +989,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				325B0E081F31CE7100E869E8 /* BMHomeCell.swift in Sources */,
-				32B706DC1F33F7FE00F18528 /* BMDragCellCollectionView.m in Sources */,
+				328082C41F34473300DD4966 /* BMDragCellCollectionView.swift in Sources */,
+				328082C61F344CA600DD4966 /* BMHoneModel.swift in Sources */,
 				325B0E071F31CE7100E869E8 /* AppDelegate.swift in Sources */,
 				325B0E0A1F31CE7100E869E8 /* ViewController.swift in Sources */,
-				325B0D511F31CDD100E869E8 /* BMDragCellCollectionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

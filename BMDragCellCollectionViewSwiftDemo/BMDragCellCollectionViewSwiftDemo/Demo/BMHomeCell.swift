@@ -25,5 +25,5 @@
 import UIKit
 
 class BMHomeCell: UICollectionViewCell {
-    @IBOutlet weak var label: UILabel!
+    @IBOutlet weak var iconImageView: UIImageView!
 }

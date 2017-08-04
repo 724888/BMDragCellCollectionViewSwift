@@ -44,14 +44,18 @@ class ViewController: UIViewController {
         return layout
     }()
 
-    lazy var dataArray: [[String]] = {
-        var array = [[String]]()
-        var arc = arc4random_uniform(50) + 20
+    lazy var dataArray: [[BMHoneModel]] = {
+        var array = [[BMHoneModel]]()
+        var arc = arc4random_uniform(10) + 2
         for index in 0...arc {
-            var arr1 = [String]()
-            var arc1 = arc4random_uniform(10) + 10
+            var arr1 = [BMHoneModel]()
+            var arc1 = arc4random_uniform(30) + 10
             for index1 in 0...arc1 {
-                arr1.append("组\(index)-\(index1)")
+                let w = Double(arc4random_uniform(100)) + 30.0
+                let obj = BMHoneModel()
+                obj.icon = String(format:"%03d.png", index1)
+                obj.size = CGSize.init(width: w, height: w)
+                arr1.append(obj)
             }
             array.append(arr1)
         }
@@ -78,21 +82,21 @@ class ViewController: UIViewController {
 
 extension ViewController : BMDragCellCollectionViewDelegate {
     func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView, newDataArray: Array<Any>) -> Void {
-        self.dataArray = newDataArray as! [[String]]
+        self.dataArray = newDataArray as! [[BMHoneModel]]
     }
 
     func dragCellCollectionViewShouldBeginMove(_ dragCellCollectionView: BMDragCellCollectionView, indexPath: IndexPath) -> Bool {
         if indexPath.item == 0 {
+            let alert = UIAlertController.init(title: "温馨提示", message: "这个是不可以移动的哦", preferredStyle: .alert)
+            alert.addAction(UIAlertAction.init(title: "ok", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
             return false
         }
         return true
     }
-    
-    func dragCellCollectionViewShouldBeginExchange(_ dragCellCollectionView: BMDragCellCollectionView, sourceIndexPath: IndexPath, destinationIndexPath: IndexPath) -> Bool {
-        if destinationIndexPath.item == 3 {
-            return false
-        }
-        return true
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return self.dataArray[indexPath.section][indexPath.item].size
     }
 }
 
@@ -106,14 +110,19 @@ extension ViewController : BMDragCellCollectionViewDataSource {
         return dataArray.count;
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataArray[section].count;
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kCellWithReuseIdentifier, for: indexPath) as! BMHomeCell
-        cell.label.text = dataArray[indexPath.section][indexPath.item]
+        let obj = self.dataArray[indexPath.section][indexPath.item]
+        var image = UIImage.init(named: obj.icon)
+        if image == nil {
+            image = UIImage.init(named: "001.png")
+        }
+        cell.iconImageView.image = image
         return cell
     }
 }
+
