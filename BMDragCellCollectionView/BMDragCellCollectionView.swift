@@ -28,6 +28,11 @@ enum BMDragCellCollectionViewScrollDirection {
     case none, left, right, up, down
 }
 
+func delay(_ delay:Double, closure:@escaping ()->()) {
+    let when = DispatchTime.now() + delay
+    DispatchQueue.main.asyncAfter(deadline: when, execute: closure)
+}
+
 extension UICollectionView {
     func bm_rectFor(_ section: Int) -> CGRect {
         let sectionNum = self.dataSource?.collectionView(self, numberOfItemsInSection: section)
@@ -110,7 +115,7 @@ class BMDragCellCollectionView: UICollectionView {
         }
         self.isEndDrag = true
         self.longGesture.isEnabled = false
-        Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false) { (time) in
+        delay(0.25) {
             if self.isCanDrag {
                 self.longGesture.isEnabled = true;
             }
@@ -275,9 +280,9 @@ class BMDragCellCollectionView: UICollectionView {
             // 判断手势落点位置是否在Item上
             if (indexPath == nil) {
                 self.longGesture.isEnabled = false
-                Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false, block: { (time) in
+                delay(0.25) {
                     self.longGesture.isEnabled = true
-                })
+                }
                 break;
             }
 
@@ -285,9 +290,9 @@ class BMDragCellCollectionView: UICollectionView {
                 if !(self.dragDelegate?.dragCellCollectionViewShouldBeginMove!(self, indexPath: indexPath!))! {
                     oldIndexPath = nil;
                     self.longGesture.isEnabled = false
-                    Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false, block: { (time) in
+                    delay(0.25) {
                         self.longGesture.isEnabled = true;
-                    })
+                    }
                     break
                 }
             }
