@@ -44,13 +44,18 @@ class ViewController: UIViewController {
         return layout
     }()
 
-    lazy var dataArray: [String] = {
-        var array = Array<Any>()
+    lazy var dataArray: [[String]] = {
+        var array = [[String]]()
         var arc = arc4random_uniform(50) + 20
         for index in 0...arc {
-            array.append("数据--\(index)")
+            var arr1 = [String]()
+            var arc1 = arc4random_uniform(10) + 10
+            for index1 in 0...arc1 {
+                arr1.append("组\(index)-\(index1)")
+            }
+            array.append(arr1)
         }
-        return array as! [String]
+        return array
     }()
 
     override func viewDidLoad() {
@@ -73,7 +78,21 @@ class ViewController: UIViewController {
 
 extension ViewController : BMDragCellCollectionViewDelegate {
     func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView, newDataArray: Array<Any>) -> Void {
-        self.dataArray = newDataArray as! [String]
+        self.dataArray = newDataArray as! [[String]]
+    }
+
+    func dragCellCollectionViewShouldBeginMove(_ dragCellCollectionView: BMDragCellCollectionView, indexPath: IndexPath) -> Bool {
+        if indexPath.item == 0 {
+            return false
+        }
+        return true
+    }
+    
+    func dragCellCollectionViewShouldBeginExchange(_ dragCellCollectionView: BMDragCellCollectionView, sourceIndexPath: IndexPath, destinationIndexPath: IndexPath) -> Bool {
+        if destinationIndexPath.item == 3 {
+            return false
+        }
+        return true
     }
 }
 
@@ -83,13 +102,18 @@ extension ViewController : BMDragCellCollectionViewDataSource {
         return dataArray
     }
 
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return dataArray.count;
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return dataArray[section].count;
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kCellWithReuseIdentifier, for: indexPath) as! BMHomeCell
-        cell.label.text = dataArray[indexPath.item]
+        cell.label.text = dataArray[indexPath.section][indexPath.item]
         return cell
     }
 }

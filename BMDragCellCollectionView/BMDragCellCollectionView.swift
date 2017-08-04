@@ -35,26 +35,104 @@ enum BMDragCellCollectionViewScrollDirection {
     case none, left, right, up, down
 }
 
+extension UICollectionView {
+    func BMDragCellCollectionView_rectForSection(_ section: Int) -> CGRect {
+        let sectionNum = self.dataSource?.collectionView(self, numberOfItemsInSection: section)
+        if sectionNum! <= 0 {
+            return CGRect();
+        } else {
+            let firstRect = self.BMDragCellCollectionView_rectForRowAtIndexPath(IndexPath.init(item: 0, section: section))
+            let lastRect = self.BMDragCellCollectionView_rectForRowAtIndexPath(IndexPath.init(item: sectionNum!-1, section: section))
+            return CGRect.init(x: 0, y: firstRect.minY, width: self.frame.width, height: lastRect.maxY - firstRect.midY)
+        }
+    }
+
+    func BMDragCellCollectionView_rectForRowAtIndexPath(_ indexPath: IndexPath) -> CGRect {
+        return (self.layoutAttributesForItem(at: indexPath)?.frame)!
+    }
+}
+
 /// BMDragCellCollectionViewDelegate
-protocol BMDragCellCollectionViewDelegate : UICollectionViewDelegateFlowLayout {
-    
+@objc protocol BMDragCellCollectionViewDelegate : UICollectionViewDelegateFlowLayout {
+
     /// 数据与那更新时，触发外面的使用者更新数据源
     ///
     /// - Parameters:
     ///   - dragCellCollectionView: dragCellCollectionView
     ///   - newDataArray: newDataArray
     /// - Returns: Returns
-    func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView, newDataArray: Array<Any>) -> Void
+    @objc func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView, newDataArray: Array<Any>) -> Void
+    
+    /// 将要开始拖拽时，询问此位置的Cell是否可以拖拽
+    ///
+    /// - Parameters:
+    ///   - dragCellCollectionView: dragCellCollectionView
+    ///   - indexPath: indexPath
+    /// - Returns: Returns
+    @objc optional func dragCellCollectionViewShouldBeginMove(_ dragCellCollectionView: BMDragCellCollectionView, indexPath: IndexPath) -> Bool
+    
+    /// 将要交换时，询问是否可以交换
+    ///
+    /// - Parameters:
+    ///   - dragCellCollectionView: dragCellCollectionView
+    ///   - sourceIndexPath: sourceIndexPath
+    ///   - destinationIndexPath: destinationIndexPath
+    /// - Returns: Returns
+    @objc optional func dragCellCollectionViewShouldBeginExchange(_ dragCellCollectionView: BMDragCellCollectionView, sourceIndexPath: IndexPath, destinationIndexPath: IndexPath) -> Bool
+    
+    /// 重排完成时
+    ///
+    /// - Parameter dragCellCollectionView: dragCellCollectionView
+    /// - Returns: Returns
+    @objc optional func dragCellCollectionViewDidEndDrag(_ dragCellCollectionView: BMDragCellCollectionView) -> Void
+    
+    /// 开始拖拽时
+    ///
+    /// - Parameters:
+    ///   - dragCellCollectionView: dragCellCollectionView
+    ///   - beganDragAtPoint: beganDragAtPoint
+    ///   - indexPath: indexPath
+    /// - Returns: Returns
+    @objc optional func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView, beganDragAtPoint:CGPoint, indexPath: IndexPath) -> Void
+    
+    /// 拖拽改变时
+    ///
+    /// - Parameters:
+    ///   - dragCellCollectionView: dragCellCollectionView
+    ///   - changedDragAtPoint: changedDragAtPoint
+    ///   - indexPath: indexPath
+    /// - Returns: Returns
+    @objc optional func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView, changedDragAtPoint: CGPoint, indexPath: IndexPath) -> Void
+    
+    ///  结束拖拽时
+    ///
+    /// - Parameters:
+    ///   - dragCellCollectionView: dragCellCollectionView
+    ///   - endedDragAtPoint: endedDragAtPoint
+    ///   - indexPath: indexPath
+    /// - Returns: Returns
+    @objc optional func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView, endedDragAtPoint:CGPoint, indexPath: IndexPath) -> Void
+    
+
+    /// 结束拖拽时时是否内部自动处理
+    ///
+    /// - Parameters:
+    ///   - dragCellCollectionView: dragCellCollectionView
+    ///   - endedDragAutomaticOperationAtPoint: endedDragAutomaticOperationAtPoint
+    ///   - section: section
+    ///   - indexPath: indexPath
+    /// - Returns: Returns
+    @objc optional func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView, endedDragAutomaticOperationAtPoint: CGPoint, section: Int, indexPath: IndexPath) -> Bool
 }
 
 /// BMDragCellCollectionViewDataSource
-protocol BMDragCellCollectionViewDataSource : UICollectionViewDataSource {
+@objc protocol BMDragCellCollectionViewDataSource : UICollectionViewDataSource {
 
     /// 将要交换时获取数据源
     ///
     /// - Parameter dragCellCollectionView: dragCellCollectionView
     /// - Returns: 获取的数据源
-    func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView) -> Array<Any>
+    @objc func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView) -> Array<Any>
 }
 
 /// BMDragCellCollectionView
@@ -148,9 +226,18 @@ class BMDragCellCollectionView: UICollectionView {
             return
         }
 
-        currentIndexPath = idnex1;
-        self.oldPoint = self.cellForItem(at: currentIndexPath!)?.center
+        if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionViewShouldBeginExchange(_:sourceIndexPath:destinationIndexPath:))))! {
+            if !(self.dragDelegate?.dragCellCollectionViewShouldBeginExchange!(self, sourceIndexPath: oldIndexPath!, destinationIndexPath: idnex1!))! {
+                return;
+            }
+        }
 
+        currentIndexPath = idnex1;
+
+        self.oldPoint = self.cellForItem(at: currentIndexPath!)?.center
+        // 操作数据
+        self.updateSourceData()
+        
         // 移动 会调用willMoveToIndexPath方法更新数据源
         self.moveItem(at: self.oldIndexPath!, to: self.currentIndexPath!)
         
@@ -181,7 +268,11 @@ class BMDragCellCollectionView: UICollectionView {
         let indexPath = self.indexPathForItem(at: point);
         switch longGesture.state {
         case .began:
-            print("began index\(String(describing: indexPath?.description)))")
+
+            if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionView(_:beganDragAtPoint:indexPath:))))! {
+                self.dragDelegate?.dragCellCollectionView!(self, beganDragAtPoint: point, indexPath: indexPath!)
+            }
+            
             // 手势开始
             // 判断手势落点位置是否在Item上
             if (indexPath == nil) {
@@ -191,6 +282,19 @@ class BMDragCellCollectionView: UICollectionView {
                 })
                 break;
             }
+
+            
+            if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionViewShouldBeginMove(_:indexPath:))))! {
+                if !(self.dragDelegate?.dragCellCollectionViewShouldBeginMove!(self, indexPath: indexPath!))! {
+                    oldIndexPath = nil;
+                    self.longGesture.isEnabled = false
+                    Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false, block: { (time) in
+                        self.longGesture.isEnabled = true;
+                    })
+                    break
+                }
+            }
+
             oldIndexPath = indexPath!
             
             self.isEndDrag = false;
@@ -225,6 +329,11 @@ class BMDragCellCollectionView: UICollectionView {
             setEdgeTimer()
             break
         case .changed:
+
+            if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionView(_:changedDragAtPoint:indexPath:))))! {
+                self.dragDelegate?.dragCellCollectionView!(self, changedDragAtPoint: point, indexPath: indexPath!)
+            }
+
             // 当前手指位置
             lastPoint = point;
 
@@ -239,6 +348,12 @@ class BMDragCellCollectionView: UICollectionView {
             // 没有取到或者距离隐藏的最近时就返回
             if (idnex1 == nil) {
                 break;
+            }
+
+            if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionViewShouldBeginExchange(_:sourceIndexPath:destinationIndexPath:))))! {
+                if !(self.dragDelegate?.dragCellCollectionViewShouldBeginExchange!(self, sourceIndexPath: oldIndexPath!, destinationIndexPath: idnex1!))! {
+                    break;
+                }
             }
 
             currentIndexPath = idnex1;
@@ -256,6 +371,28 @@ class BMDragCellCollectionView: UICollectionView {
             break
         default:
             self.isEndDrag = true;
+
+            if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionView(_:endedDragAtPoint:indexPath:))))! {
+                self.dragDelegate?.dragCellCollectionView!(self, endedDragAtPoint: point, indexPath: indexPath!)
+            }
+
+            if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionView(_:endedDragAutomaticOperationAtPoint:section:indexPath:))))! {
+                var section = -1
+                let sec = self.dragDataSource?.numberOfSections!(in: self)
+                for i in 0..<sec! {
+                    let rect = self.BMDragCellCollectionView_rectForSection(i)
+                    if (point.x > rect.origin.x
+                        && point.x < rect.origin.x + rect.size.width
+                        && point.y > rect.origin.y
+                        && point.y < rect.origin.y + rect.size.height) {
+                        section = i;
+                        break;
+                    }
+                }
+                if (self.dragDelegate?.dragCellCollectionView!(self, endedDragAutomaticOperationAtPoint: point, section: section, indexPath: indexPath!))! {
+                    return;
+                }
+            }
             if self.oldIndexPath == nil {
                 return
             }
@@ -274,6 +411,9 @@ class BMDragCellCollectionView: UICollectionView {
                 self.snapedView?.removeFromSuperview()
                 cell?.isHidden = false
                 self.isUserInteractionEnabled = true
+                if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionViewDidEndDrag(_:))))! {
+                    self.dragDelegate?.dragCellCollectionViewDidEndDrag!(self)
+                }
             })
             endEdgeTimer()
             break
@@ -342,27 +482,48 @@ class BMDragCellCollectionView: UICollectionView {
 
     private func updateSourceData() -> Void {
         var array = self.dragDataSource?.dragCellCollectionView(self)
+
+        let dataTypeCheck = (self.numberOfSections != 1) || ((self.numberOfSections == 1) && array?[0] is Array<Any>)
+        if dataTypeCheck {
+            for (i, obj) in (array?.enumerated())! {
+                array?[i] = (obj as! NSArray).mutableCopy() as! [Any]
+            }
+        }
+
         if self.currentIndexPath?.section == self.oldIndexPath?.section {
+            var arr1 = [Any]()
+            if dataTypeCheck {
+                arr1 = array?[(self.oldIndexPath?.section)!] as! [Any]
+            } else {
+                arr1 = array!
+            }
             if (self.currentIndexPath?.item)! > (self.oldIndexPath?.item)! {
                 for i in (oldIndexPath?.item)!..<(currentIndexPath?.item)! {
-                    let obj1 = array?[i]
-                    array?[i] = array?[i + 1] ?? ""
-                    array?[i + 1] = obj1 ?? ""
+                    let obj1 = arr1[i]
+                    arr1[i] = arr1[i + 1] 
+                    arr1[i + 1] = obj1 
                 }
             } else {
                 var i = (oldIndexPath?.item)!
                 while i > (currentIndexPath?.item)! {
-                    let obj1 = array?[i]
-                    array?[i] = array?[i - 1] ?? ""
-                    array?[i - 1] = obj1 ?? ""
+                    let obj1 = arr1[i]
+                    arr1[i] = arr1[i - 1] 
+                    arr1[i - 1] = obj1 
                     i -= 1
                 }
+            }
+            if dataTypeCheck {
+                array?[(self.oldIndexPath?.section)!] = arr1
+            } else {
+                array = arr1
             }
         } else {
             var orignalSection = array?[(oldIndexPath?.section)!] as! Array<Any>
             var currentSection = array?[(currentIndexPath?.section)!] as! Array<Any>
             currentSection.insert(orignalSection[(oldIndexPath?.item)!], at: (currentIndexPath?.item)!)
             orignalSection.remove(at: (oldIndexPath?.item)!)
+            array?[(oldIndexPath?.section)!] = orignalSection
+            array?[(currentIndexPath?.section)!] = currentSection
         }
         self.dragDelegate?.dragCellCollectionView(self, newDataArray: array!)
     }
