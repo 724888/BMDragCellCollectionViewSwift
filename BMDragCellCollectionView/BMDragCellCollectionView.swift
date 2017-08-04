@@ -441,6 +441,8 @@ class BMDragCellCollectionView: UICollectionView {
             if cell.frame.contains(point) {
                 index1 = self.indexPath(for: cell)
                 break;
+                
+                
             }
         }
 
