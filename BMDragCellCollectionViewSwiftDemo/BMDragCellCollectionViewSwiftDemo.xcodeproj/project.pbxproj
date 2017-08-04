@@ -188,6 +188,7 @@
 		325B0EB41F31CE7100E869E8 /* 192@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 325B0E061F31CE7100E869E8 /* 192@2x.png */; };
 		328082C41F34473300DD4966 /* BMDragCellCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 328082C31F34473300DD4966 /* BMDragCellCollectionView.swift */; };
 		328082C61F344CA600DD4966 /* BMHoneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 328082C51F344CA600DD4966 /* BMHoneModel.swift */; };
+		328082C81F344FE000DD4966 /* BMDragCellCollectionViewSwift.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 328082C71F344FE000DD4966 /* BMDragCellCollectionViewSwift.podspec */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -395,6 +396,7 @@
 		325B0E061F31CE7100E869E8 /* 192@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "192@2x.png"; sourceTree = "<group>"; };
 		328082C31F34473300DD4966 /* BMDragCellCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMDragCellCollectionView.swift; sourceTree = "<group>"; };
 		328082C51F344CA600DD4966 /* BMHoneModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMHoneModel.swift; sourceTree = "<group>"; };
+		328082C71F344FE000DD4966 /* BMDragCellCollectionViewSwift.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BMDragCellCollectionViewSwift.podspec; path = ../BMDragCellCollectionViewSwift.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -425,6 +427,7 @@
 		325B0D151F31CD4E00E869E8 = {
 			isa = PBXGroup;
 			children = (
+				328082C71F344FE000DD4966 /* BMDragCellCollectionViewSwift.podspec */,
 				328082C21F34471A00DD4966 /* BMDragCellCollectionView */,
 				325B0D201F31CD4E00E869E8 /* BMDragCellCollectionViewSwiftDemo */,
 				325B0D351F31CD4F00E869E8 /* BMDragCellCollectionViewSwiftDemoTests */,
@@ -959,6 +962,7 @@
 				325B0EA41F31CE7100E869E8 /* 176@2x.png in Resources */,
 				325B0E091F31CE7100E869E8 /* BMHomeCell.xib in Resources */,
 				325B0E461F31CE7100E869E8 /* 060@2x.png in Resources */,
+				328082C81F344FE000DD4966 /* BMDragCellCollectionViewSwift.podspec in Resources */,
 				325B0E291F31CE7100E869E8 /* 031@2x.png in Resources */,
 				325B0EB11F31CE7100E869E8 /* 189@2x.png in Resources */,
 				325B0E2D1F31CE7100E869E8 /* 035@2x.png in Resources */,
