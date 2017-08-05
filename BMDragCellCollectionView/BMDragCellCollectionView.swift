@@ -344,6 +344,7 @@ class BMDragCellCollectionView: UICollectionView {
         self.reloadItems(at: [oldIndexPath!])
     }
     
+    /// 获取手势在的位置
     private func setScrollDirection() -> BMDragCellCollectionViewScrollDirection {
         if self.bounds.size.height + self.contentOffset.y - (snapedView?.center.y)! < (snapedView?.bounds.size.height)! / 2 && self.bounds.size.height + self.contentOffset.y < self.contentSize.height {
             return .down;
@@ -359,7 +360,8 @@ class BMDragCellCollectionView: UICollectionView {
         }
         return .none;
     }
-
+    
+    /// 长按手势
     @objc private func handlelongGesture(_ longGesture: UILongPressGestureRecognizer) -> Void {
         let point = longGesture.location(in: self)
         let indexPath = self.indexPathForItem(at: point);
@@ -512,20 +514,20 @@ class BMDragCellCollectionView: UICollectionView {
         }
     }
 
+    /// 开始定时器
     private func setEdgeTimer() -> Void {
         endEdgeTimer()
         self.edgeTimer = CADisplayLink.init(target: self, selector: #selector(edgeScroll))
         self.edgeTimer?.add(to: RunLoop.main, forMode: .commonModes)
     }
 
+    /// 结束定时器
     private func endEdgeTimer() -> Void {
         self.edgeTimer?.invalidate()
         self.edgeTimer = nil;
     }
 
     /// 取出应该交换的index
-    ///
-    /// - Returns: index
     private func getChangedIndexPath() -> IndexPath? {
         var index1: IndexPath? = nil
         let point = self.longGesture.location(in: self)
@@ -564,7 +566,8 @@ class BMDragCellCollectionView: UICollectionView {
         }
         return index1;
     }
-
+    
+    /// 更新数据源
     private func updateSourceData() -> Void {
         var array = self.dragDataSource?.dragCellCollectionView(self)
         let dataTypeCheck = (self.numberOfSections != 1) || ((self.numberOfSections == 1) && array?[0] is Array<Any>)
@@ -608,6 +611,7 @@ class BMDragCellCollectionView: UICollectionView {
         self.dragDelegate?.dragCellCollectionView(self, newDataArray: array!)
     }
     
+    /// 重写此方法是为了反正在复用时出现问题
     internal override func dequeueReusableCell(withReuseIdentifier identifier: String, for indexPath: IndexPath) -> UICollectionViewCell {
         let cell = super.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
         if isEndDrag {
