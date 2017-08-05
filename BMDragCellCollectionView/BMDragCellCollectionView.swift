@@ -24,16 +24,34 @@
 
 import UIKit
 
+/// 手势触摸到的位置
+///
+/// - none: 未到边沿
+/// - left: left
+/// - right: right
+/// - up: up
+/// - down: down
 enum BMDragCellCollectionViewScrollDirection {
     case none, left, right, up, down
 }
 
+/// 延时函数
+///
+/// - Parameters:
+///   - delay: 延时时间秒
+///   - closure: 闭包
 func delay(_ delay:Double, closure:@escaping ()->()) {
     let when = DispatchTime.now() + delay
     DispatchQueue.main.asyncAfter(deadline: when, execute: closure)
 }
 
+// MARK: - 内部工具类
 extension UICollectionView {
+    
+    /// 获取一组的rect
+    ///
+    /// - Parameter section: 组
+    /// - Returns: rect
     func bm_rectFor(_ section: Int) -> CGRect {
         let sectionNum = self.dataSource?.collectionView(self, numberOfItemsInSection: section)
         if sectionNum! <= 0 {
@@ -44,24 +62,92 @@ extension UICollectionView {
             return CGRect.init(x: 0, y: firstRect.minY, width: self.frame.width, height: lastRect.maxY - firstRect.midY)
         }
     }
+    
+    /// 获取指定位置的Cell的rect
+    ///
+    /// - Parameter indexPath: indexPath
+    /// - Returns: rect
     func bm_rectForRow(at indexPath: IndexPath) -> CGRect {
         return (self.layoutAttributesForItem(at: indexPath)?.frame)!
     }
 }
 
+/// 代替 UICollectionViewDelegateFlowLayout 协议
 @objc protocol BMDragCellCollectionViewDelegate : UICollectionViewDelegateFlowLayout {
+    
+    /// 内部处理好数据后通知外部更新数据，必须实现
+    ///
+    /// - Parameters:
+    ///   - dragCellCollectionView: dragCellCollectionView
+    ///   - newDataArray: 新的数据源
     @objc func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView, newDataArray: Array<Any>) -> Void
+    
+    /// 将要开始拖拽时，询问是否可以拖拽（比如：加号按钮就不可以拖拽）
+    ///
+    /// - Parameters:
+    ///   - dragCellCollectionView: dragCellCollectionView
+    ///   - indexPath: indexPath
+    /// - Returns: YES：可以拖拽，NO：不可拖拽，默认是YES
     @objc optional func dragCellCollectionViewShouldBeginMove(_ dragCellCollectionView: BMDragCellCollectionView, indexPath: IndexPath) -> Bool
+    
+    /// 将要交换时，询问是否可以交换
+    ///
+    /// - Parameters:
+    ///   - dragCellCollectionView: dragCellCollectionView
+    ///   - sourceIndexPath: sourceIndexPath
+    ///   - destinationIndexPath: destinationIndexPath
+    /// - Returns: YES：可以交换，NO：不可以交换，默认是YES
     @objc optional func dragCellCollectionViewShouldBeginExchange(_ dragCellCollectionView: BMDragCellCollectionView, sourceIndexPath: IndexPath, destinationIndexPath: IndexPath) -> Bool
+    
+    /// 编辑完成时
+    ///
+    /// - Parameter dragCellCollectionView: dragCellCollectionView
     @objc optional func dragCellCollectionViewDidEndDrag(_ dragCellCollectionView: BMDragCellCollectionView) -> Void
+    
+    /// 开始手势时
+    ///
+    /// - Parameters:
+    ///   - dragCellCollectionView: dragCellCollectionView
+    ///   - beganDragAtPoint: beganDragAtPoint
+    ///   - indexPath: indexPath
     @objc optional func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView, beganDragAtPoint:CGPoint, indexPath: IndexPath) -> Void
+    
+    /// 手势变化时
+    ///
+    /// - Parameters:
+    ///   - dragCellCollectionView: dragCellCollectionView
+    ///   - changedDragAtPoint: changedDragAtPoint
+    ///   - indexPath: indexPath
     @objc optional func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView, changedDragAtPoint: CGPoint, indexPath: IndexPath) -> Void
+    
+    /// 手势结束时
+    ///
+    /// - Parameters:
+    ///   - dragCellCollectionView: dragCellCollectionView
+    ///   - endedDragAtPoint: endedDragAtPoint
+    ///   - indexPath: indexPath
     @objc optional func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView, endedDragAtPoint:CGPoint, indexPath: IndexPath) -> Void
+    
+    /// 结束手势时是否内部自动处理交互
+    ///
+    /// - Parameters:
+    ///   - dragCellCollectionView: dragCellCollectionView
+    ///   - endedDragAutomaticOperationAtPoint: endedDragAutomaticOperationAtPoint
+    ///   - section: section
+    ///   - indexPath: indexPath
+    /// - Returns: YES:内部自动处理，NO：外部处理（比如：今日头条第一组拖拽到第二组放手时需要自动移到第二组）默认是YES,
+    /// - 这里注意如果返回NO，需要使用者调用BMDragCellCollectionView的
+    /// - func dragMoveItem(to newIndexPath: IndexPath) -> Void 方法，内部会处理好数据源和相关动画
     @objc optional func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView, endedDragAutomaticOperationAtPoint: CGPoint, section: Int, indexPath: IndexPath) -> Bool
 }
 
 /// BMDragCellCollectionViewDataSource
 @objc protocol BMDragCellCollectionViewDataSource : UICollectionViewDataSource {
+    
+    /// 获取外部的数据源
+    ///
+    /// - Parameter dragCellCollectionView: dragCellCollectionView
+    /// - Returns: 数据源
     @objc func dragCellCollectionView(_ dragCellCollectionView: BMDragCellCollectionView) -> Array<Any>
 }
 
@@ -87,6 +173,7 @@ class BMDragCellCollectionView: UICollectionView {
     }
 
     private var privateMinimumPressDuration: CFTimeInterval = 0.5
+    /// minimumPressDuration 手势触发时间，默认是0.5
     var minimumPressDuration: CFTimeInterval {
         get {
             return privateMinimumPressDuration;
@@ -97,6 +184,8 @@ class BMDragCellCollectionView: UICollectionView {
     }
 
     private var privateCanDrag: Bool = true
+    
+    /// 是否可以拖拽，默认是true
     var isCanDrag: Bool {
         get {
             return privateCanDrag;
@@ -106,9 +195,14 @@ class BMDragCellCollectionView: UICollectionView {
         }
     }
 
+    /// 缩放比例，默认1.2
     var dragZoomScale: Float = 1.2
+    /// 拖拽时透明度，默认1.0
     var dragCellAlpha: Float = 1.0
-
+    
+    /// 主要外部处理拖拽时，调用此方法是把当前拖拽的Cell移动到指定位置
+    ///
+    /// - Parameter newIndexPath: newIndexPath
     func dragMoveItem(to newIndexPath: IndexPath) -> Void {
         if self.isEndDrag {
             return
@@ -159,7 +253,7 @@ class BMDragCellCollectionView: UICollectionView {
         self.oldIndexPath = nil;
         endEdgeTimer()
     }
-
+    
     private var snapedView: UIView?
     private var oldIndexPath: IndexPath?
     private var currentIndexPath: IndexPath?
@@ -441,8 +535,6 @@ class BMDragCellCollectionView: UICollectionView {
             if cell.frame.contains(point) {
                 index1 = self.indexPath(for: cell)
                 break;
-                
-                
             }
         }
 
@@ -475,7 +567,6 @@ class BMDragCellCollectionView: UICollectionView {
 
     private func updateSourceData() -> Void {
         var array = self.dragDataSource?.dragCellCollectionView(self)
-
         let dataTypeCheck = (self.numberOfSections != 1) || ((self.numberOfSections == 1) && array?[0] is Array<Any>)
         if dataTypeCheck {
             for (i, obj) in (array?.enumerated())! {
@@ -516,7 +607,7 @@ class BMDragCellCollectionView: UICollectionView {
         }
         self.dragDelegate?.dragCellCollectionView(self, newDataArray: array!)
     }
-
+    
     internal override func dequeueReusableCell(withReuseIdentifier identifier: String, for indexPath: IndexPath) -> UICollectionViewCell {
         let cell = super.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
         if isEndDrag {
