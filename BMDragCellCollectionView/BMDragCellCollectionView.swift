@@ -59,7 +59,11 @@ extension UICollectionView {
         } else {
             let firstRect = self.bm_rectForRow(at: IndexPath.init(item: 0, section: section))
             let lastRect = self.bm_rectForRow(at: IndexPath.init(item: sectionNum!-1, section: section))
-            return CGRect.init(x: 0, y: firstRect.minY, width: self.frame.width, height: lastRect.maxY - firstRect.midY)
+            if (self.collectionViewLayout as! UICollectionViewFlowLayout).scrollDirection == .horizontal {
+                return CGRect.init(x: firstRect.minX, y: 0, width: (lastRect.maxX - firstRect.minX), height: self.frame.height)
+            } else {
+                return CGRect.init(x: 0, y: firstRect.minY, width: self.frame.width, height: lastRect.maxY - firstRect.midY)
+            }
         }
     }
     
