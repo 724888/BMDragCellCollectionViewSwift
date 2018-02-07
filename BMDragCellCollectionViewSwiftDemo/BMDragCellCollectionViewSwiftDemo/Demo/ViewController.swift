@@ -64,8 +64,8 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        dragCellCollectionView.dragDelegate = self
-        dragCellCollectionView.dragDataSource = self
+        dragCellCollectionView.longDragDelegate = self
+        dragCellCollectionView.longDragDataSource = self
         self.navigationController?.navigationBar.isHidden = false
         self.navigationController?.navigationBar.isTranslucent = false
         setUI()

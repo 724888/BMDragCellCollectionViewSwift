@@ -159,7 +159,7 @@ extension UICollectionView {
 class BMDragCellCollectionView: UICollectionView {
 
     /// dragDelegate,用此代理代替delegate 暂未找到同OC的处理方案
-    weak open var dragDelegate: BMDragCellCollectionViewDelegate? {
+    weak open var longDragDelegate: BMDragCellCollectionViewDelegate? {
         get {
             return super.delegate as? BMDragCellCollectionViewDelegate
         } set {
@@ -168,7 +168,7 @@ class BMDragCellCollectionView: UICollectionView {
     }
 
     /// dragDataSource,用此代理代替dataSource 暂未找到同OC的处理方案
-    weak open var dragDataSource: BMDragCellCollectionViewDataSource? {
+    weak open var longDragDataSource: BMDragCellCollectionViewDataSource? {
         get {
             return super.dataSource as? BMDragCellCollectionViewDataSource
         } set {
@@ -249,8 +249,8 @@ class BMDragCellCollectionView: UICollectionView {
             self.snapedView?.removeFromSuperview()
             cell?.isHidden = false
             self.isUserInteractionEnabled = true
-            if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionViewDidEndDrag(_:))))! {
-                self.dragDelegate?.dragCellCollectionViewDidEndDrag!(self)
+            if (self.longDragDelegate != nil) && (self.longDragDelegate?.responds(to: #selector(self.longDragDelegate?.self.dragCellCollectionViewDidEndDrag(_:))))! {
+                self.longDragDelegate?.dragCellCollectionViewDidEndDrag!(self)
             }
         }
         // 关闭定时器
@@ -328,8 +328,9 @@ class BMDragCellCollectionView: UICollectionView {
             return
         }
 
-        if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionViewShouldBeginExchange(_:sourceIndexPath:destinationIndexPath:))))! {
-            if !(self.dragDelegate?.dragCellCollectionViewShouldBeginExchange!(self, sourceIndexPath: oldIndexPath!, destinationIndexPath: idnex1!))! {
+        if (self.longDragDelegate != nil)
+            && (self.longDragDelegate?.responds(to: #selector(self.longDragDelegate?.self.dragCellCollectionViewShouldBeginExchange(_:sourceIndexPath:destinationIndexPath:))))! {
+            if !(self.longDragDelegate?.dragCellCollectionViewShouldBeginExchange!(self, sourceIndexPath: oldIndexPath!, destinationIndexPath: idnex1!))! {
                 return;
             }
         }
@@ -350,16 +351,20 @@ class BMDragCellCollectionView: UICollectionView {
     
     /// 获取手势在的位置
     private func setScrollDirection() -> BMDragCellCollectionViewScrollDirection {
-        if self.bounds.size.height + self.contentOffset.y - (snapedView?.center.y)! < (snapedView?.bounds.size.height)! / 2 && self.bounds.size.height + self.contentOffset.y < self.contentSize.height {
+        if self.bounds.size.height + self.contentOffset.y - (snapedView?.center.y)! < (snapedView?.bounds.size.height)! / 2
+            && self.bounds.size.height + self.contentOffset.y < self.contentSize.height {
             return .down;
         }
-        if ((snapedView?.center.y)! - self.contentOffset.y < (snapedView?.bounds.size.height)! / 2 && self.contentOffset.y > 0) {
+        if ((snapedView?.center.y)! - self.contentOffset.y < (snapedView?.bounds.size.height)! / 2
+            && self.contentOffset.y > 0) {
             return .up;
         }
-        if (self.bounds.size.width + self.contentOffset.x - (snapedView?.center.x)! < (snapedView?.bounds.size.width)! / 2 && self.bounds.size.width + self.contentOffset.x < self.contentSize.width) {
+        if (self.bounds.size.width + self.contentOffset.x - (snapedView?.center.x)! < (snapedView?.bounds.size.width)! / 2
+            && self.bounds.size.width + self.contentOffset.x < self.contentSize.width) {
             return .right;
         }
-        if ((snapedView?.center.x)! - self.contentOffset.x < (snapedView?.bounds.size.width)! / 2 && self.contentOffset.x > 0) {
+        if ((snapedView?.center.x)! - self.contentOffset.x < (snapedView?.bounds.size.width)! / 2
+            && self.contentOffset.x > 0) {
             return .left;
         }
         return .none;
@@ -372,8 +377,9 @@ class BMDragCellCollectionView: UICollectionView {
         switch longGesture.state {
         case .began:
 
-            if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionView(_:beganDragAtPoint:indexPath:))))! {
-                self.dragDelegate?.dragCellCollectionView!(self, beganDragAtPoint: point, indexPath: indexPath!)
+            if (self.longDragDelegate != nil)
+                && (self.longDragDelegate?.responds(to: #selector(self.longDragDelegate?.self.dragCellCollectionView(_:beganDragAtPoint:indexPath:))))! {
+                self.longDragDelegate?.dragCellCollectionView!(self, beganDragAtPoint: point, indexPath: indexPath!)
             }
             
             // 手势开始
@@ -386,8 +392,9 @@ class BMDragCellCollectionView: UICollectionView {
                 break;
             }
 
-            if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionViewShouldBeginMove(_:indexPath:))))! {
-                if !(self.dragDelegate?.dragCellCollectionViewShouldBeginMove!(self, indexPath: indexPath!))! {
+            if (self.longDragDelegate != nil)
+                && (self.longDragDelegate?.responds(to: #selector(self.longDragDelegate?.self.dragCellCollectionViewShouldBeginMove(_:indexPath:))))! {
+                if !(self.longDragDelegate?.dragCellCollectionViewShouldBeginMove!(self, indexPath: indexPath!))! {
                     oldIndexPath = nil;
                     self.longGesture.isEnabled = false
                     delay(0.25) {
@@ -432,8 +439,9 @@ class BMDragCellCollectionView: UICollectionView {
             break
         case .changed:
 
-            if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionView(_:changedDragAtPoint:indexPath:))))! {
-                self.dragDelegate?.dragCellCollectionView!(self, changedDragAtPoint: point, indexPath: indexPath!)
+            if (self.longDragDelegate != nil)
+                && (self.longDragDelegate?.responds(to: #selector(self.longDragDelegate?.self.dragCellCollectionView(_:changedDragAtPoint:indexPath:))))! {
+                self.longDragDelegate?.dragCellCollectionView!(self, changedDragAtPoint: point, indexPath: indexPath!)
             }
 
             // 当前手指位置
@@ -452,8 +460,9 @@ class BMDragCellCollectionView: UICollectionView {
                 break;
             }
 
-            if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionViewShouldBeginExchange(_:sourceIndexPath:destinationIndexPath:))))! {
-                if !(self.dragDelegate?.dragCellCollectionViewShouldBeginExchange!(self, sourceIndexPath: oldIndexPath!, destinationIndexPath: idnex1!))! {
+            if (self.longDragDelegate != nil)
+                && (self.longDragDelegate?.responds(to: #selector(self.longDragDelegate?.self.dragCellCollectionViewShouldBeginExchange(_:sourceIndexPath:destinationIndexPath:))))! {
+                if !(self.longDragDelegate?.dragCellCollectionViewShouldBeginExchange!(self, sourceIndexPath: oldIndexPath!, destinationIndexPath: idnex1!))! {
                     break;
                 }
             }
@@ -474,20 +483,22 @@ class BMDragCellCollectionView: UICollectionView {
         default:
             self.isEndDrag = true;
 
-            if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionView(_:endedDragAtPoint:indexPath:))))! {
-                self.dragDelegate?.dragCellCollectionView!(self, endedDragAtPoint: point, indexPath: indexPath!)
+            if (self.longDragDelegate != nil)
+                && (self.longDragDelegate?.responds(to: #selector(self.longDragDelegate?.self.dragCellCollectionView(_:endedDragAtPoint:indexPath:))))! {
+                self.longDragDelegate?.dragCellCollectionView!(self, endedDragAtPoint: point, indexPath: indexPath!)
             }
 
-            if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionView(_:endedDragAutomaticOperationAtPoint:section:indexPath:))))! {
+            if (self.longDragDelegate != nil)
+                && (self.longDragDelegate?.responds(to: #selector(self.longDragDelegate?.self.dragCellCollectionView(_:endedDragAutomaticOperationAtPoint:section:indexPath:))))! {
                 var section = -1
-                let sec = self.dragDataSource?.numberOfSections!(in: self)
+                let sec = self.longDragDataSource?.numberOfSections!(in: self)
                 for i in 0..<sec! {
                     if self.bm_rectFor(i).contains(point) {
                         section = i;
                         break;
                     }
                 }
-                if (self.dragDelegate?.dragCellCollectionView!(self, endedDragAutomaticOperationAtPoint: point, section: section, indexPath: indexPath!))! {
+                if (self.longDragDelegate?.dragCellCollectionView!(self, endedDragAutomaticOperationAtPoint: point, section: section, indexPath: indexPath!))! {
                     return;
                 }
             }
@@ -509,8 +520,9 @@ class BMDragCellCollectionView: UICollectionView {
                 self.snapedView?.removeFromSuperview()
                 cell?.isHidden = false
                 self.isUserInteractionEnabled = true
-                if (self.dragDelegate != nil) && (self.dragDelegate?.responds(to: #selector(self.dragDelegate?.self.dragCellCollectionViewDidEndDrag(_:))))! {
-                    self.dragDelegate?.dragCellCollectionViewDidEndDrag!(self)
+                if (self.longDragDelegate != nil)
+                    && (self.longDragDelegate?.responds(to: #selector(self.longDragDelegate?.self.dragCellCollectionViewDidEndDrag(_:))))! {
+                    self.longDragDelegate?.dragCellCollectionViewDidEndDrag!(self)
                 }
             })
             endEdgeTimer()
@@ -565,7 +577,8 @@ class BMDragCellCollectionView: UICollectionView {
                 index1 = self.indexPath(for: cell)
             }
         }
-        if ((index1 == nil) || (index1?.item == self.oldIndexPath?.item) && (index1?.row == self.oldIndexPath?.row)) {
+        if ((index1 == nil) || (index1?.item == self.oldIndexPath?.item)
+            && (index1?.row == self.oldIndexPath?.row)) {
             return nil;
         }
         return index1;
@@ -573,8 +586,9 @@ class BMDragCellCollectionView: UICollectionView {
     
     /// 更新数据源
     private func updateSourceData() -> Void {
-        var array = self.dragDataSource?.dragCellCollectionView(self)
-        let dataTypeCheck = (self.numberOfSections != 1) || ((self.numberOfSections == 1) && array?[0] is Array<Any>)
+        var array = self.longDragDataSource?.dragCellCollectionView(self)
+        let dataTypeCheck = (self.numberOfSections != 1) || ((self.numberOfSections == 1)
+            && array?[0] is Array<Any>)
         if dataTypeCheck {
             for (i, obj) in (array?.enumerated())! {
                 array?[i] = (obj as! NSArray).mutableCopy() as! [Any]
@@ -612,17 +626,19 @@ class BMDragCellCollectionView: UICollectionView {
             array?[(oldIndexPath?.section)!] = orignalSection
             array?[(currentIndexPath?.section)!] = currentSection
         }
-        self.dragDelegate?.dragCellCollectionView(self, newDataArray: array!)
+        self.longDragDelegate?.dragCellCollectionView(self, newDataArray: array!)
     }
     
-    /// 重写此方法是为了反正在复用时出现问题
+    /// 重写此方法是为了防止在复用时Cell显示异常
     internal override func dequeueReusableCell(withReuseIdentifier identifier: String, for indexPath: IndexPath) -> UICollectionViewCell {
         let cell = super.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
         if isEndDrag {
             cell.isHidden = false
             return cell
         }
-        cell.isHidden = (oldPoint != nil) && oldIndexPath?.item == indexPath.item && oldIndexPath?.section == indexPath.section
+        cell.isHidden = (oldPoint != nil)
+            && oldIndexPath?.item == indexPath.item
+            && oldIndexPath?.section == indexPath.section
         return cell
     }
 }
